@@ -235,8 +235,10 @@ int ssl3_connect(SSL *s)
             s->server = 0;
             if (cb != NULL)
                 cb(s, SSL_CB_HANDSHAKE_START, 1);
-
-            if ((s->version & 0xff00) != 0x0300) {
+            //add by andy TODO :判断协议版本号，国密版本号是0x0101
+            //协议版本既不不是ssl23,也不是　gmssl，报错
+            //if ((s->version & 0xff00) != 0x0300) {
+            if ((s->version & 0xff00) != 0x0300 &&  (s->version != GM1_VERSION)) {
                 SSLerr(SSL_F_SSL3_CONNECT, ERR_R_INTERNAL_ERROR);
                 s->state = SSL_ST_ERR;
                 ret = -1;
@@ -827,6 +829,7 @@ int ssl3_client_hello(SSL *s)
         }
 
         /* Ciphers supported */
+        // add by andy TODO: 获取国密套件
         i = ssl_cipher_list_to_bytes(s, SSL_get_ciphers(s), &(p[2]), 0);
         if (i == 0) {
             SSLerr(SSL_F_SSL3_CLIENT_HELLO, SSL_R_NO_CIPHERS_AVAILABLE);

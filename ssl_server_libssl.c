@@ -24,7 +24,8 @@ int ssl_server_libssl(void)
 
 	SSL_library_init();
 	SSL_load_error_strings();
-    server_meth = SSLv23_server_method();
+    //server_meth = SSLv23_server_method();
+    server_meth = GMSSLv1_server_method();
 	ssl_server_ctx = SSL_CTX_new(server_meth);
 	
 	if(!ssl_server_ctx)

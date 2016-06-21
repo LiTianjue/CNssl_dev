@@ -372,4 +372,14 @@ const SSL_CIPHER *gm1_get_cipher(unsigned int u)
 }
 
 
+//add by andy
+//TODO　算法套件的获取必须重新写	ssl_locl.h +917 918
+const SSL_CIPHER *gm1_get_cipher_by_char(const unsigned char *p)
+{
+
+}
+
+const SSL_CIPHER *gm1_put_cipher_by_char(const SSL_CIPHER *c,const unsigned char *p)
+{
+}
 

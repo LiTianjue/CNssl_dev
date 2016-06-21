@@ -1537,12 +1537,12 @@ STACK_OF(SSL_CIPHER) *ssl_bytes_to_cipher_list(SSL *s, unsigned char *p,
         goto err;
     }
     s->cert->ciphers_rawlen = (size_t)num;
-
+    // add by andy TODO:这里循环取一个可用的算法套件
     for (i = 0; i < num; i += n) {
         /* Check for TLS_EMPTY_RENEGOTIATION_INFO_SCSV */
         if (s->s3 && (n != 3 || !p[0]) &&
-            (p[n - 2] == ((SSL3_CK_SCSV >> 8) & 0xff)) &&
-            (p[n - 1] == (SSL3_CK_SCSV & 0xff))) {
+            (p[n - 2] == ((SSL3_CK_SCSV >> 8) & 0xff)) &&   //高位是0x0300
+            (p[n - 1] == (SSL3_CK_SCSV & 0xff))) {               //低位是0x0000
             /* SCSV fatal if renegotiating */
             if (s->renegotiate) {
                 SSLerr(SSL_F_SSL_BYTES_TO_CIPHER_LIST,
@@ -1578,7 +1578,7 @@ STACK_OF(SSL_CIPHER) *ssl_bytes_to_cipher_list(SSL *s, unsigned char *p,
             p += n;
             continue;
         }
-
+        // add by andy TODO:这里取不到算法套件？
         c = ssl_get_cipher_by_char(s, p);
         p += n;
         if (c != NULL) {

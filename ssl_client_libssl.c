@@ -22,12 +22,18 @@ int ssl_client_libssl(void)
     struct sockaddr_in serveraddr;
 	int handshakestatus;
 	SSL *clientssl;
-	char buffer[1024] = "Client Hello World";
+	char buffer[1024] = "Client Say Hello Server";
 	int ret;
 
-	SSL_library_init();
+	SSL_library_init();	//添加国密算法对ssl的支持
 	SSL_load_error_strings();
-    client_meth = SSLv23_client_method();
+
+	// TODO 1
+    //client_meth = SSLv23_client_method();
+    //client_meth = TLSv1_1_client_method();
+	client_meth = GMSSLv1_client_method();
+	
+	// TODO 2
 	ssl_client_ctx = SSL_CTX_new(client_meth);
 	
 	if(!ssl_client_ctx)
@@ -52,6 +58,7 @@ int ssl_client_libssl(void)
 			return -1;		
 		}
 	
+		// TODO 3
 		if(SSL_CTX_check_private_key(ssl_client_ctx) != 1)
 		{
 			printf("Private and certificate is not matching\n");
@@ -84,7 +91,9 @@ int ssl_client_libssl(void)
         return -1;
     }
 		
-
+	/* ----------------------------------------------- */
+	/* Now we hava a real socket to use for ssl */
+	// TODO 4
 	clientssl = SSL_new(ssl_client_ctx);
 	if(!clientssl)
 	{
@@ -93,12 +102,23 @@ int ssl_client_libssl(void)
 	}
 	SSL_set_fd(clientssl, clientsocketfd);
 		
+	// TODO 5
 	if((ret = SSL_connect(clientssl)) != 1)
 	{
 		printf("Handshake Error %d\n", SSL_get_error(clientssl, ret));
 		return -1;
 	}
+
+
+	/* ------------------------------------------------------- */
+	/* SSL Connect Success Now we print some information */
+	printf ("SSL connection using %s\n", SSL_get_cipher (clientssl));
+
+
 		
+
+	/* -------------------------------------------------------- */
+	/* There if we need verify peer */
 	if(verify_peer)
 	{
 		X509 *ssl_client_cert = NULL;

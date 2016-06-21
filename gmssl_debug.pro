@@ -74,6 +74,7 @@ HEADERS += \
     ssl/ssl3.h \
     ssl/ssl_locl.h \
     ssl/tls1.h \
+	ssl/gmssl1.h \
     ssl_debug.h
 
 LIBS += -L /home/andy/GitHub/WORK/gmssl_dev/gmssl_dev/lib -lcrypto -ldl

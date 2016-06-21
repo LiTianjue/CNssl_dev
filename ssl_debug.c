@@ -7,7 +7,7 @@
 int main(int argc,char *argv[])
 {
 	if(argc == 1)
-		ssl_server_libssl();
+        ssl_server_libssl();
 
 	if(argc == 2)
 	{

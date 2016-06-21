@@ -263,8 +263,9 @@ int ssl3_accept(SSL *s)
             s->server = 1;
             if (cb != NULL)
                 cb(s, SSL_CB_HANDSHAKE_START, 1);
-
-            if ((s->version >> 8) != 3) {
+           // add by andy TODO: 支持国密协议版本号
+            //if ((s->version >> 8) != 3) {
+            if ((s->version >> 8) != 3  &&  (s->version) != GM1_VERSION ) {
                 SSLerr(SSL_F_SSL3_ACCEPT, ERR_R_INTERNAL_ERROR);
                 s->state = SSL_ST_ERR;
                 return -1;
@@ -952,9 +953,10 @@ int ssl3_get_client_hello(SSL *s)
      * use version from inside client hello, not from record header (may
      * differ: see RFC 2246, Appendix E, second paragraph)
      */
+    // add by andy TODO:协议版本号，这里要注意啥?
     s->client_version = (((int)p[0]) << 8) | (int)p[1];
     p += 2;
-
+    //add by andy TODO: 主要是在这里要怎么处理呢?
     if (SSL_IS_DTLS(s) ? (s->client_version > s->version &&
                           s->method->version != DTLS_ANY_VERSION)
         : (s->client_version < s->version)) {
@@ -1033,6 +1035,7 @@ int ssl3_get_client_hello(SSL *s)
          * In practice, clients do not accept a version mismatch and
          * will abort the handshake with an error.
          */
+        // add by andy TODO : 这里又有一个协议版本相关的处理
         if (i == 1 && s->version == s->session->ssl_version) { /* previous
                                                                 * session */
             s->hit = 1;
@@ -1250,7 +1253,7 @@ int ssl3_get_client_hello(SSL *s)
             goto f_err;
         }
     }
-
+    //add by andy TODO:又一个与协议版本号相关的
     if (!s->hit && s->version >= TLS1_VERSION && s->tls_session_secret_cb) {
         SSL_CIPHER *pref_cipher = NULL;
 
@@ -1406,6 +1409,7 @@ int ssl3_get_client_hello(SSL *s)
             }
             s->rwstate = SSL_NOTHING;
         }
+        // add by andy 选择密码套件
         c = ssl3_choose_cipher(s, s->session->ciphers, SSL_get_ciphers(s));
 
         if (c == NULL) {
