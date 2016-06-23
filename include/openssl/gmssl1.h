@@ -67,7 +67,7 @@ extern "C" {
 //#define GM1_VERSION		0x0401
 //#define GM1_VERSION_MAJOR	0x04
 //#define GM1_VERSION_MINOR	0x01
-#define GM1_VERSION		0x0301
+#define GM1_VERSION			0x0301
 #define GM1_VERSION_MAJOR	0x03
 #define GM1_VERSION_MINOR	0x01
 #endif

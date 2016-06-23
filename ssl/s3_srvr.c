@@ -311,7 +311,7 @@ int ssl3_accept(SSL *s)
                     s->state = SSL_ST_ERR;
                     goto end;
                 }
-
+                //andy TODO:SM3 for mac
                 ssl3_init_finished_mac(s);
                 s->state = SSL3_ST_SR_CLNT_HELLO_A;
                 s->ctx->stats.sess_accept++;

@@ -342,17 +342,17 @@ OPENSSL_GLOBAL SSL_CIPHER gm1_ciphers[] = {
 
 	/* Cipher 12 */
 	{
-		1,
-		GM1_TXT_RSA_SM4_SHA1,
-		GM1_CK_RSA_SM4_SHA1,
-		SSL_kEECDH,
-		SSL_aSM2,
-		SSL_SM4,
-		SSL_SM3,
-		SSL_GMV1,
-		SSL_NOT_EXP | SSL_HIGH,
-		SSL_HANDSHAKE_MAC_DEFAULT | TLS1_PRF,
-		128,
+		1,						// valid
+		GM1_TXT_RSA_SM4_SHA1,	// name
+		GM1_CK_RSA_SM4_SHA1,	// id 
+		SSL_kEECDH,				// 密钥交换算法
+		SSL_aSM2,				// 服务器验证方法
+		SSL_SM4,				// 对称算法
+		SSL_SM3,				// mac 算法
+		SSL_GMV1,				// 协议版本
+		SSL_NOT_EXP | SSL_HIGH,	// 算法强度
+		SSL_HANDSHAKE_MAC_DEFAULT | TLS1_PRF,	//flags
+		128,					
 		128,
 	},
 
@@ -374,8 +374,21 @@ const SSL_CIPHER *gm1_get_cipher(unsigned int u)
 
 //add by andy
 //TODO　算法套件的获取必须重新写	ssl_locl.h +917 918
+//用于检查所选的套件是否可用
 const SSL_CIPHER *gm1_get_cipher_by_char(const unsigned char *p)
 {
+	SSL_CIPHER c;
+	const SSL_CIPHER *cp;
+	unsigned long id;
+	id = 0x03000000L | ((unsigned long)p[0] <<8L) | (unsigned long)p[1];
+	c.id = id;
+	cp = OBJ_bsearch_ssl_cipher_id(&c,gm1_ciphers,GM1_NUM_CIPHERS);
+	if(cp == NULL)
+		fprintf(stderr,"Unknow cipher ID %x\n",(p[0] << 8)|p[1]);
+	else
+		fprintf(stderr,"[Andy] Select cipher ID %x\n",(p[0] << 8)|p[1]);
+
+	return cp;
 
 }
 

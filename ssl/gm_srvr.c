@@ -71,3 +71,46 @@ IMPLEMENT_gm1_meth_func(GMSSLv1_server_method,
 			ssl3_accept,ssl_undefined_function,
 			gm1_get_server_method)
 
+
+	/* --------------------------------------------- */
+	/* 服务端方法宏展开应该是*/
+	/*
+	   const SSL_METHOD *GMSSLv1_server_method(void) {
+	   static const GMSSLv1_server_method_data={
+	   0x0101,		//协议版本号	GMSSLv1	0x0101
+	   tls1_new,	// new 一个 SSL
+	   tls1_clear,	// 清除	SSL
+	   tls1_free,	// 释放
+	   ssl3_accept, // 
+	   ssl_undefined_function,	//服务端不用定义connect 方法
+	   ssl3_read,	// 读
+	   ssl3_peek,	// 试读
+	   ssl3_write,	// 写
+	   ssl3_shutdown,	// 关闭连接
+	   ssl3_renegotiate,	//重新协商
+	   ssl3_renegotiate_check,	//重新协商检查
+	   ssl3_get_message,		// 从原始握手数据包中截取数据
+	   ssl3_read_bytes,		// 读 bytes
+	   ssl3_write_bytes,		// 写 bytes
+	   ssl3_dispatch_alert,		// 报警
+	   ssl3_ctrl,				//控制？
+	   ssl3_ctx_ctrl,			// ctx 控制？
+	   gm1_get_cipher_by_char,	// 获取加密套件			需要重写
+	   gm1_put_cipher_by_char,	// 设置加密套件			需要重写
+	   ssl3_pending,			// pending
+	   gm1_num_ciphers,		// 加密套件个数
+	   gm1_get_cipher,		// 获取加密套件				客户端调用?
+	   tls1_get_method,		//获取method ，获取自己？
+	   tls1_default_timeout,		// 默认超时时间
+	   &GMSSLv1_enc_data,		// 一系列的加密运算
+	   ssl_undefined_void_function,	//					ssl_version
+	   ssl3_callback_ctrl,		// 回调个啥？
+	   ssl3_ctx_callback_ctrl,		//回调个啥？
+	   };
+	   return &TLSv1_1_method_data;
+	   }
+	   */
+
+
+
+	/* -------------------------------------------- */

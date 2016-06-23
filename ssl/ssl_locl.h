@@ -914,7 +914,7 @@ const SSL_METHOD *func_name(void)  \
                 ssl3_dispatch_alert, \
                 ssl3_ctrl, \
                 ssl3_ctx_ctrl, \
-                ssl3_get_cipher_by_char, \
+                gm1_get_cipher_by_char, \
                 ssl3_put_cipher_by_char, \
                 ssl3_pending, \
                 gm1_num_ciphers, \
@@ -1388,6 +1388,8 @@ long tls1_callback_ctrl(SSL *s, int cmd, void (*fp) (void));
 # ifndef NO_GMSSL
 int gm1_num_ciphers(void);
 const SSL_CIPHER *gm1_get_cipher(unsigned int u);
+// add by andy test ,可能不应该放在这里
+const SSL_CIPHER *gm1_get_cipher_by_char(const unsigned char *p);
 # endif
 
 int dtls1_new(SSL *s);
