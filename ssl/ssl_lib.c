@@ -1511,7 +1511,7 @@ STACK_OF(SSL_CIPHER) *ssl_bytes_to_cipher_list(SSL *s, unsigned char *p,
 
     if (s->s3)
         s->s3->send_connection_binding = 0;
-
+    //add by andy TODO:重写put_cipher_by_char 方法？？？
     n = ssl_put_cipher_by_char(s, NULL, NULL);
     if (n == 0 || (num % n) != 0) {
         SSLerr(SSL_F_SSL_BYTES_TO_CIPHER_LIST,

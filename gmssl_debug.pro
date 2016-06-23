@@ -61,7 +61,8 @@ SOURCES += \
 	ssl/gm_enc.c \
     ssl_server_libssl.c \
     ssl_debug.c \
-    ssl_client_libssl.c
+    ssl_client_libssl.c \
+    debug_message.c
 
 HEADERS += \
     ssl/dtls1.h \

@@ -21,7 +21,7 @@ int main(int argc,char *argv[])
 	}
 	else
 	{
-		printf("unknow mode .\n");
+    //	printf("unknow mode .\n");
 	}
 
 	return 0;

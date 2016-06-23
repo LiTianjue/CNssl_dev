@@ -14,6 +14,8 @@
 
 #define OFF	0
 #define ON	1
+#include <openssl/ssl.h>
+void apps_ssl_info_callback(SSL *s, int where, int ret);
 
 
 int ssl_server_libssl(void);

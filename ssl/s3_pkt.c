@@ -358,7 +358,7 @@ static int ssl3_get_record(SSL *s)
 
         /* Lets check version */
         if (!s->first_packet) {
-            if (version != s->version) {
+            if (version != s->version) {    //add by andy TODO :CHECK VERSION for GM1
                 SSLerr(SSL_F_SSL3_GET_RECORD, SSL_R_WRONG_VERSION_NUMBER);
                 if ((s->version & 0xFF00) == (version & 0xFF00)
                     && !s->enc_write_ctx && !s->write_hash) {
@@ -381,8 +381,8 @@ static int ssl3_get_record(SSL *s)
                 goto f_err;
             }
         }
-
-        if ((version >> 8) != SSL3_VERSION_MAJOR) {
+        //add by andy TODO:Check againe ???
+        if ((version >> 8) != SSL3_VERSION_MAJOR  &&  (version>>8) != GM1_VERSION_MAJOR) {
             SSLerr(SSL_F_SSL3_GET_RECORD, SSL_R_WRONG_VERSION_NUMBER);
             goto err;
         }

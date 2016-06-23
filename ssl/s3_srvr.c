@@ -927,7 +927,9 @@ int ssl3_get_client_hello(SSL *s)
     if (s->state == SSL3_ST_SR_CLNT_HELLO_A) {
         s->state = SSL3_ST_SR_CLNT_HELLO_B;
     }
-    s->first_packet = 1;
+    //add by andy test ,do not checke version while first packet
+    //s->first_packet = 1;
+    s->first_packet = 0;
     n = s->method->ssl_get_message(s,
                                    SSL3_ST_SR_CLNT_HELLO_B,
                                    SSL3_ST_SR_CLNT_HELLO_C,
@@ -956,7 +958,7 @@ int ssl3_get_client_hello(SSL *s)
     // add by andy TODO:协议版本号，这里要注意啥?
     s->client_version = (((int)p[0]) << 8) | (int)p[1];
     p += 2;
-    //add by andy TODO: 主要是在这里要怎么处理呢?
+    //add by andy TODO: 主要是在这里要怎么处理呢? 为国密协议多加一层判断？
     if (SSL_IS_DTLS(s) ? (s->client_version > s->version &&
                           s->method->version != DTLS_ANY_VERSION)
         : (s->client_version < s->version)) {
@@ -1390,7 +1392,7 @@ int ssl3_get_client_hello(SSL *s)
             goto f_err;
         }
         ciphers = NULL;
-        if (!tls1_set_server_sigalgs(s)) {
+        if (!tls1_set_server_sigalgs(s)) {      //add by andy TODO: 设置服务器的签名算法，如果证书是sm2的可能会涉及SM2的操作
             SSLerr(SSL_F_SSL3_GET_CLIENT_HELLO, SSL_R_CLIENTHELLO_TLSEXT);
             goto err;
         }

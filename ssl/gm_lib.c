@@ -386,7 +386,7 @@ const SSL_CIPHER *gm1_get_cipher_by_char(const unsigned char *p)
 	if(cp == NULL)
 		fprintf(stderr,"Unknow cipher ID %x\n",(p[0] << 8)|p[1]);
 	else
-		fprintf(stderr,"[Andy] Select cipher ID %x\n",(p[0] << 8)|p[1]);
+		//fprintf(stderr,"[Andy] Select cipher ID %x\n",(p[0] << 8)|p[1]);
 
 	return cp;
 

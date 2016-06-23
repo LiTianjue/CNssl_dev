@@ -74,3 +74,5 @@ Thumbs.db
 
 # andy by andy
 ssl/libssl.a
+libssl.a
+andy_ssl

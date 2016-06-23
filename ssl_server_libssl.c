@@ -95,7 +95,9 @@ int ssl_server_libssl(void)
 	
 		clientsocketfd = accept(serversocketfd, NULL, 0);
 		serverssl = SSL_new(ssl_server_ctx);
-		if(!serverssl)
+        // print debug info
+        SSL_set_info_callback(serverssl,apps_ssl_info_callback);
+        if(!serverssl)
 		{
 			printf("Error SSL_new\n");
 			return -1;

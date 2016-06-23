@@ -35,6 +35,7 @@ int ssl_client_libssl(void)
 	
 	// TODO 2
 	ssl_client_ctx = SSL_CTX_new(client_meth);
+    SSL_CTX_set_info_callback(ssl_client_ctx,apps_ssl_info_callback);
 	
 	if(!ssl_client_ctx)
 	{
