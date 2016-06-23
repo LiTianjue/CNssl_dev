@@ -35,7 +35,6 @@ int ssl_client_libssl(void)
 	
 	// TODO 2
 	ssl_client_ctx = SSL_CTX_new(client_meth);
-    SSL_CTX_set_info_callback(ssl_client_ctx,apps_ssl_info_callback);
 	
 	if(!ssl_client_ctx)
 	{
@@ -101,6 +100,8 @@ int ssl_client_libssl(void)
 		printf("Error SSL_new\n");
 		return -1;
 	}
+
+    SSL_set_info_callback(clientssl,apps_ssl_info_callback);
 	SSL_set_fd(clientssl, clientsocketfd);
 		
 	// TODO 5
