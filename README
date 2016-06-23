@@ -1,0 +1,16 @@
+GMSSL　SSL协议层开发
+
+基于 OPENSSL 1.0.2d　版本开发
+
+加密库来自GMSSL项目，编译为静态库放在lib目录下调用
+
+ssl目录下的代码分离自openssl/ssl/目录
+
+服务器测试代码 ssl_server_libssl.c
+客户端测试代码　ssl_client_libssl.c
+
+开发测试运行环境
+ubuntu 15.04
+gcc version 4.9.2
+
+
