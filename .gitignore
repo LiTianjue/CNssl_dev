@@ -76,3 +76,5 @@ Thumbs.db
 ssl/libssl.a
 libssl.a
 andy_ssl
+!Makefile
+ssl/Makefile
