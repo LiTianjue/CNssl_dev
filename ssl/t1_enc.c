@@ -795,7 +795,7 @@ int tls1_enc(SSL *s, int send)
 #endif                          /* KSSL_DEBUG */
 
     if ((s->session == NULL) || (ds == NULL) || (enc == NULL)) {
-        memmove(rec->data, rec->input, rec->length);
+        memmove(rec->data, rec->input, rec->length);    //andy 首次握手所有的数据都是透明传输的，直接拷贝就行
         rec->input = rec->data;
         ret = 1;
     } else {

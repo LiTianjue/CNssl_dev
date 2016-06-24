@@ -361,7 +361,7 @@ long ssl3_get_message(SSL *s, int st1, int stn, int mt, long max, int *ok)
         return s->init_num;
     }
 
-    p = (unsigned char *)s->init_buf->data;
+    p = (unsigned char *)s->init_buf->data;	//指向原始数据
 
     if (s->state == st1) {      /* s->init_num < 4 */
         int skip_message;

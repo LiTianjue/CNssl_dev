@@ -227,7 +227,7 @@ int ssl3_accept(SSL *s)
         cb = s->ctx->info_callback;
 
     /* init things to blank */
-    s->in_handshake++;
+    s->in_handshake++;  //in_handshake　指示处于握手阶段
     if (!SSL_in_init(s) || SSL_in_before(s))
         SSL_clear(s);
 
@@ -311,7 +311,7 @@ int ssl3_accept(SSL *s)
                     s->state = SSL_ST_ERR;
                     goto end;
                 }
-                //andy TODO:SM3 for mac
+                //andy TODO:SM3 for mac,这里只是申请了一块bufff
                 ssl3_init_finished_mac(s);
                 s->state = SSL3_ST_SR_CLNT_HELLO_A;
                 s->ctx->stats.sess_accept++;
@@ -925,16 +925,16 @@ int ssl3_get_client_hello(SSL *s)
      * will respond with SSLv3, even if prompted with TLSv1.
      */
     if (s->state == SSL3_ST_SR_CLNT_HELLO_A) {
-        s->state = SSL3_ST_SR_CLNT_HELLO_B;
+        s->state = SSL3_ST_SR_CLNT_HELLO_B;     //跳转到该状态读取相关信息
     }
     //add by andy test ,do not checke version while first packet
     //s->first_packet = 1;
-    s->first_packet = 0;
+    s->first_packet = 1;
     n = s->method->ssl_get_message(s,
-                                   SSL3_ST_SR_CLNT_HELLO_B,
-                                   SSL3_ST_SR_CLNT_HELLO_C,
-                                   SSL3_MT_CLIENT_HELLO,
-                                   SSL3_RT_MAX_PLAIN_LENGTH, &ok);
+                                   SSL3_ST_SR_CLNT_HELLO_B,             // 4字节长度在该状态被读取
+                                   SSL3_ST_SR_CLNT_HELLO_C,             //负载数据在该状态被读取
+                                   SSL3_MT_CLIENT_HELLO,                //获取Client Hello的信息
+                                   SSL3_RT_MAX_PLAIN_LENGTH, &ok); //最大数据长度16384
 
     if (!ok)
         return ((int)n);
@@ -955,7 +955,7 @@ int ssl3_get_client_hello(SSL *s)
      * use version from inside client hello, not from record header (may
      * differ: see RFC 2246, Appendix E, second paragraph)
      */
-    // add by andy TODO:协议版本号，这里要注意啥?
+    // add by andy TODO:协议版本号，这里要注意啥? 这个版本号来自握手协议而不是记录层
     s->client_version = (((int)p[0]) << 8) | (int)p[1];
     p += 2;
     //add by andy TODO: 主要是在这里要怎么处理呢? 为国密协议多加一层判断？
@@ -996,11 +996,11 @@ int ssl3_get_client_hello(SSL *s)
             return 1;
     }
 
-    /* load the client random */
+    /* load the client random  取出32字节的随机数*/
     memcpy(s->s3->client_random, p, SSL3_RANDOM_SIZE);
     p += SSL3_RANDOM_SIZE;
 
-    /* get the session-id */
+    /* get the session-id  取出1字节的回话id长度*/
     j = *(p++);
 
     if (p + j > d + n) {
@@ -1152,7 +1152,7 @@ int ssl3_get_client_hello(SSL *s)
         SSLerr(SSL_F_SSL3_GET_CLIENT_HELLO, SSL_R_LENGTH_MISMATCH);
         goto f_err;
     }
-    if (ssl_bytes_to_cipher_list(s, p, i, &(ciphers)) == NULL) {
+    if (ssl_bytes_to_cipher_list(s, p, i, &(ciphers)) == NULL) {    /*取出客户端提供的算法套件*/
         goto err;
     }
     p += i;

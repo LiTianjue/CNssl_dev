@@ -333,13 +333,13 @@ static int ssl3_get_record(SSL *s)
     }
 
  again:
-    /* check if we have the header */
+    /* check if we have the header  如果含有记录层头，读５字节记录层头*/
     if ((s->rstate != SSL_ST_READ_BODY) ||
         (s->packet_length < SSL3_RT_HEADER_LENGTH)) {
         n = ssl3_read_n(s, SSL3_RT_HEADER_LENGTH, s->s3->rbuf.len, 0);
         if (n <= 0)
             return (n);         /* error or non-blocking */
-        s->rstate = SSL_ST_READ_BODY;
+        s->rstate = SSL_ST_READ_BODY;//现在可以去读负载了
 
         p = s->packet;
         if (s->msg_callback)
@@ -347,9 +347,9 @@ static int ssl3_get_record(SSL *s)
                             s->msg_callback_arg);
 
         /* Pull apart the header into the SSL3_RECORD */
-        rr->type = *(p++);
-        ssl_major = *(p++);
-        ssl_minor = *(p++);
+        rr->type = *(p++);          //协议类型
+        ssl_major = *(p++);         // 主版本号
+        ssl_minor = *(p++);         //次版本号
         version = (ssl_major << 8) | ssl_minor;
         n2s(p, rr->length);
 #if 0
@@ -439,7 +439,7 @@ static int ssl3_get_record(SSL *s)
 
     /* decrypt in place in 'rr->input' */
     rr->data = rr->input;
-
+    //将数据从packet 中取出，放到 rr->input,解密之后的数据放到rr->data中
     enc_err = s->method->ssl3_enc->enc(s, 0);
     /*-
      * enc_err is:
@@ -564,7 +564,7 @@ static int ssl3_get_record(SSL *s)
      */
 
     /* we have pulled in a full packet so zero things */
-    s->packet_length = 0;
+    s->packet_length = 0;   //andy :数据取出来并解密成功
 
     /* just read a 0 length packet */
     if (rr->length == 0) {
@@ -1230,7 +1230,7 @@ int ssl3_read_bytes(SSL *s, int type, unsigned char *buf, int len, int peek)
     }
 
     /* we now have a packet which can be read and processed */
-
+    //andy 数据被解密，解压缩，现在是明文，可以正常处理了
     if (s->s3->change_cipher_spec /* set when we receive ChangeCipherSpec,
                                    * reset by ssl3_get_finished */
         && (rr->type != SSL3_RT_HANDSHAKE)) {
