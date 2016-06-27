@@ -911,7 +911,7 @@ int ssl3_get_server_hello(SSL *s)
      */
     if (SSL_IS_DTLS(s))
         s->first_packet = 1;
-
+	// 77 字节
     n = s->method->ssl_get_message(s,
                                    SSL3_ST_CR_SRVR_HELLO_A,
                                    SSL3_ST_CR_SRVR_HELLO_B, -1, 20000, &ok);
@@ -970,17 +970,17 @@ int ssl3_get_server_hello(SSL *s)
         al = SSL_AD_PROTOCOL_VERSION;
         goto f_err;
     }
-    p += 2;
+    p += 2;	//去掉2字节版本号
 
     /* load the server hello data */
     /* load the server random */
     memcpy(s->s3->server_random, p, SSL3_RANDOM_SIZE);
-    p += SSL3_RANDOM_SIZE;
+    p += SSL3_RANDOM_SIZE;	//取出32字节的随机数
 
     s->hit = 0;
 
     /* get the session-id */
-    j = *(p++);
+    j = *(p++);	// 1字节session-id 长度(32)
 
     if ((j > sizeof s->session->session_id) || (j > SSL3_SESSION_ID_SIZE)) {
         al = SSL_AD_ILLEGAL_PARAMETER;
@@ -1000,6 +1000,7 @@ int ssl3_get_server_hello(SSL *s)
      * we can resume, and later peek at the next handshake message to see if the
      * server wants to resume.
      */
+	//add by andy ,TODO:GmSSL must do it ?
     if (s->version >= TLS1_VERSION && s->tls_session_secret_cb &&
         s->session->tlsext_tick) {
         SSL_CIPHER *pref_cipher = NULL;
@@ -1045,7 +1046,7 @@ int ssl3_get_server_hello(SSL *s)
         s->session->session_id_length = j;
         memcpy(s->session->session_id, p, j); /* j could be 0 */
     }
-    p += j;
+    p += j;	//32字节的session_id
     c = ssl_get_cipher_by_char(s, p);
     if (c == NULL) {
         /* unknown cipher */
@@ -1063,7 +1064,7 @@ int ssl3_get_server_hello(SSL *s)
         SSLerr(SSL_F_SSL3_GET_SERVER_HELLO, SSL_R_WRONG_CIPHER_RETURNED);
         goto f_err;
     }
-    p += ssl_put_cipher_by_char(s, NULL, NULL);
+    p += ssl_put_cipher_by_char(s, NULL, NULL);	//这里应该是加2个字节
 
     sk = ssl_get_ciphers_by_id(s);
     i = sk_SSL_CIPHER_find(sk, c);
@@ -1118,7 +1119,7 @@ int ssl3_get_server_hello(SSL *s)
         goto f_err;
     }
 #else
-    j = *(p++);
+    j = *(p++);//压缩算法
     if (s->hit && j != s->session->compress_meth) {
         al = SSL_AD_ILLEGAL_PARAMETER;
         SSLerr(SSL_F_SSL3_GET_SERVER_HELLO,
@@ -1146,12 +1147,13 @@ int ssl3_get_server_hello(SSL *s)
 
 #ifndef OPENSSL_NO_TLSEXT
     /* TLS extensions */
+	/* 这个时候 p - d = 70 还差7个字节*/
     if (!ssl_parse_serverhello_tlsext(s, &p, d, n)) {
         SSLerr(SSL_F_SSL3_GET_SERVER_HELLO, SSL_R_PARSE_TLSEXT);
         goto err;
     }
 #endif
-
+	// add by andy : TODO Bug 数据包长度错误
     if (p != (d + n)) {
         /* wrong packet length */
         al = SSL_AD_DECODE_ERROR;

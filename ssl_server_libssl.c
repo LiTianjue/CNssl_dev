@@ -131,6 +131,7 @@ int ssl_server_libssl(void)
 				printf("There is no client certificate\n");
 		}
 		bytesread = SSL_read(serverssl, buffer, sizeof(buffer));
+		printf("Get Client INFO [%s]\n",buffer);
 		addedstrlen = strlen("Appended by SSL server");
 		strncpy(&buffer[bytesread], "Appended by SSL server", addedstrlen);
 		buffer[bytesread +  addedstrlen ] = '\0';

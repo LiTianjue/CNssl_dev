@@ -3204,7 +3204,9 @@ int ssl_parse_serverhello_tlsext(SSL *s, unsigned char **p, unsigned char *d,
                                  int n)
 {
     int al = -1;
-    if (s->version < SSL3_VERSION)
+	// add by andy TODO:不能从这里退出
+    //if (s->version < SSL3_VERSION) 
+    if (s->version < SSL3_VERSION && s->version != GM1_VERSION) 
         return 1;
     if (ssl_scan_serverhello_tlsext(s, p, d, n, &al) <= 0) {
         ssl3_send_alert(s, SSL3_AL_FATAL, al);
