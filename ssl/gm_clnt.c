@@ -69,3 +69,10 @@ IMPLEMENT_gm1_meth_func(GMSSLv1_client_method,
 			ssl_undefined_function,ssl3_connect,
 			gm1_get_client_method)
 
+
+
+//add by andy TODO:server will modify the server_send_key_exchange
+int gm1_get_key_exchange(SSL *s)
+{
+	//TODO:
+}

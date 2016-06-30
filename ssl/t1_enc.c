@@ -699,7 +699,7 @@ int tls1_setup_key_block(SSL *s)
             printf("%02X%c", p1[z], ((z + 1) % 16) ? ' ' : '\n');
     }
 #endif
-
+    //add by andy TODO:GmSSL needs empty_fragments ?
     if (!(s->options & SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS)
         && s->method->version <= TLS1_VERSION) {
         /*

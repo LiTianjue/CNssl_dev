@@ -67,8 +67,8 @@ const char gm1_version_str[] = "GMSSLv1" OPENSSL_VERSION_PTEXT;
 SSL3_ENC_METHOD GMSSLv1_enc_data = {
 	tls1_enc,
 	tls1_mac,
-	tls1_setup_key_block,
-	tls1_generate_master_secret,
+	tls1_setup_key_block,			/*发送完ChangeCipherSpec后调用*/
+	tls1_generate_master_secret,	/*生成主密钥*/
 	tls1_change_cipher_state,
 	tls1_final_finish_mac,
 	TLS1_FINISH_MAC_LENGTH,

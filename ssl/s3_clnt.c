@@ -328,7 +328,7 @@ int ssl3_connect(SSL *s)
         case SSL3_ST_CR_CERT_B:
 #ifndef OPENSSL_NO_TLSEXT
             /* Noop (ret = 0) for everything but EAP-FAST. */
-            ret = ssl3_check_finished(s);
+            ret = ssl3_check_finished(s);   // 这里面有版本号检查
             if (ret < 0)
                 goto end;
             if (ret == 1) {
@@ -795,26 +795,26 @@ int ssl3_client_hello(SSL *s)
         s->client_version = s->version;
 #else
         *(p++) = s->client_version >> 8;
-        *(p++) = s->client_version & 0xff;
+        *(p++) = s->client_version & 0xff;  //2字节版本号
 #endif
 
         /* Random stuff */
         memcpy(p, s->s3->client_random, SSL3_RANDOM_SIZE);
-        p += SSL3_RANDOM_SIZE;
+        p += SSL3_RANDOM_SIZE; //32字节随机数
 
         /* Session ID */
         if (s->new_session)
             i = 0;
         else
             i = s->session->session_id_length;
-        *(p++) = i;
+        *(p++) = i;     //1字节session长度
         if (i != 0) {
             if (i > (int)sizeof(s->session->session_id)) {
                 SSLerr(SSL_F_SSL3_CLIENT_HELLO, ERR_R_INTERNAL_ERROR);
                 goto err;
             }
             memcpy(p, s->session->session_id, i);
-            p += i;
+            p += i;     //0或32字节的session
         }
 
         /* cookie stuff for DTLS */
@@ -846,7 +846,7 @@ int ssl3_client_hello(SSL *s)
             i = OPENSSL_MAX_TLS1_2_CIPHER_LENGTH & ~1;
 #endif
         s2n(i, p);
-        p += i;
+        p += i; //算法套件长度
 
         /* COMPRESSION */
 #ifdef OPENSSL_NO_COMP
@@ -1313,7 +1313,7 @@ int ssl3_get_server_certificate(SSL *s)
     }
 
     if (need_cert) {
-        int exp_idx = ssl_cipher_get_cert_index(s->s3->tmp.new_cipher);
+        int exp_idx = ssl_cipher_get_cert_index(s->s3->tmp.new_cipher); //add by andy TODO:SM2证书可能需要不同的ID
         if (exp_idx >= 0 && i != exp_idx) {
             x = NULL;
             al = SSL_AD_ILLEGAL_PARAMETER;
@@ -2061,7 +2061,7 @@ int ssl3_get_certificate_request(SSL *s)
     }
 
     /* TLS does not like anon-DH with client cert */
-    if (s->version > SSL3_VERSION) {
+    if (s->version > SSL3_VERSION) {        //add by andy TODO:GM取消了DH的秘钥交换算法?
         if (s->s3->tmp.new_cipher->algorithm_auth & SSL_aNULL) {
             ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_UNEXPECTED_MESSAGE);
             SSLerr(SSL_F_SSL3_GET_CERTIFICATE_REQUEST,
@@ -2476,14 +2476,14 @@ int ssl3_send_client_key_exchange(SSL *s)
 
             tmp_buf[0] = s->client_version >> 8;
             tmp_buf[1] = s->client_version & 0xff;
-            if (RAND_bytes(&(tmp_buf[2]), sizeof tmp_buf - 2) <= 0)
+            if (RAND_bytes(&(tmp_buf[2]), sizeof tmp_buf - 2) <= 0)     //填充４６字节的随机数
                 goto err;
 
             s->session->master_key_length = sizeof tmp_buf;
 
             q = p;
             /* Fix buf for TLS and beyond */
-//TODO: GMSSL version problem?
+//TODO: GMSSL version problem ?版本号要不要加密？要的！！！
             if (s->version > SSL3_VERSION)
                 p += 2;
             n = RSA_public_encrypt(sizeof tmp_buf,
@@ -2500,7 +2500,7 @@ int ssl3_send_client_key_exchange(SSL *s)
                 goto err;
             }
 
-            /* Fix buf for TLS and beyond */
+            /* Fix buf for TLS and beyond  TODO GmSSL Problem*/
             if (s->version > SSL3_VERSION) {
                 s2n(n, q);
                 n += 2;
@@ -3201,7 +3201,7 @@ int ssl3_send_client_verify(SSL *s)
         if (SSL_USE_SIGALGS(s)) {
             long hdatalen = 0;
             void *hdata;
-            const EVP_MD *md = s->cert->key->digest;
+            const EVP_MD *md = s->cert->key->digest;    //add by andy TODO :how can I select a GM algorithm
             hdatalen = BIO_get_mem_data(s->s3->handshake_buffer, &hdata);
             if (hdatalen <= 0 || !tls12_get_sigandhash(p, pkey, md)) {
                 SSLerr(SSL_F_SSL3_SEND_CLIENT_VERIFY, ERR_R_INTERNAL_ERROR);

@@ -685,7 +685,7 @@ int ssl3_accept(SSL *s)
 
         case SSL3_ST_SR_CERT_VRFY_A:
         case SSL3_ST_SR_CERT_VRFY_B:
-            ret = ssl3_get_cert_verify(s);
+            ret = ssl3_get_cert_verify(s);  /*读取客户端签名数据进行验签*/
             if (ret <= 0)
                 goto end;
 
@@ -2186,7 +2186,7 @@ int ssl3_get_client_key_exchange(SSL *s)
 
             }
         } else {
-            pkey = s->cert->pkeys[SSL_PKEY_RSA_ENC].privatekey;
+            pkey = s->cert->pkeys[SSL_PKEY_RSA_ENC].privatekey; //取出私钥
             if ((pkey == NULL) ||
                 (pkey->type != EVP_PKEY_RSA) || (pkey->pkey.rsa == NULL)) {
                 al = SSL_AD_HANDSHAKE_FAILURE;
@@ -2241,7 +2241,7 @@ int ssl3_get_client_key_exchange(SSL *s)
                               sizeof(rand_premaster_secret)) <= 0)
             goto err;
         decrypt_len =
-            RSA_private_decrypt((int)n, p, p, rsa, RSA_PKCS1_PADDING);
+            RSA_private_decrypt((int)n, p, p, rsa, RSA_PKCS1_PADDING); //GM/T 0024建议使用PKCS#1版本1.5对RSA加密后的密文进行编码
         ERR_clear_error();
 
         /*
@@ -2259,6 +2259,7 @@ int ssl3_get_client_key_exchange(SSL *s)
          * check as a "bad version oracle". Thus version checks are done in
          * constant time and are treated like any other decryption error.
          */
+        /*确认版本号*/
         version_good =
             constant_time_eq_8(p[0], (unsigned)(s->client_version >> 8));
         version_good &=
@@ -3044,7 +3045,7 @@ int ssl3_get_cert_verify(SSL *s)
         fprintf(stderr, "Using TLS 1.2 with client verify alg %s\n",
                 EVP_MD_name(md));
 #endif
-        if (!EVP_VerifyInit_ex(&mctx, md, NULL)
+        if (!EVP_VerifyInit_ex(&mctx, md, NULL) /*在这里验签？？*/
             || !EVP_VerifyUpdate(&mctx, hdata, hdatalen)) {
             SSLerr(SSL_F_SSL3_GET_CERT_VERIFY, ERR_R_EVP_LIB);
             al = SSL_AD_INTERNAL_ERROR;
