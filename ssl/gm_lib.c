@@ -68,7 +68,7 @@ SSL3_ENC_METHOD GMSSLv1_enc_data = {
 	tls1_enc,
 	tls1_mac,
 	tls1_setup_key_block,			/*发送完ChangeCipherSpec后调用*/
-	tls1_generate_master_secret,	/*生成主密钥*/
+	gm1_generate_master_secret,		/*生成主密钥*/
 	tls1_change_cipher_state,
 	tls1_final_finish_mac,
 	TLS1_FINISH_MAC_LENGTH,
@@ -335,7 +335,8 @@ OPENSSL_GLOBAL SSL_CIPHER gm1_ciphers[] = {
 		SSL_SM3,
 		SSL_GMV1,
 		SSL_NOT_EXP | SSL_HIGH,
-		SSL_HANDSHAKE_MAC_DEFAULT | TLS1_PRF,
+		/*SSL_HANDSHAKE_MAC_DEFAULT | TLS1_PRF,*/
+		GM1_HANDSHAKE_MAC_DEFAULT | GM1_PRF_SM3,
 		128,
 		128,
 	},
@@ -351,7 +352,7 @@ OPENSSL_GLOBAL SSL_CIPHER gm1_ciphers[] = {
 		SSL_SM3,				// mac 算法
 		SSL_GMV1,				// 协议版本
 		SSL_NOT_EXP | SSL_HIGH,	// 算法强度
-		SSL_HANDSHAKE_MAC_DEFAULT | TLS1_PRF,	//flags
+		GM1_HANDSHAKE_MAC_DEFAULT | TLS1_PRF_SHA1,	//flags
 		128,					
 		128,
 	},

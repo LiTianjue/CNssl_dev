@@ -198,7 +198,7 @@ static int gm1_PRF( long digest_mask,
 	const EVP_MD *md;
 	int ret =0;
 
-	/*计算摘要次数*/
+	/*计算摘要个数 ,国密 SM3的 index是6*/
 	count = 0;
 	for(idx = 0; ssl_get_handshake_digest(idx,&m,&md);idx++) {
 		if((m << TLS1_PRF_DGST_SHIFT) & digest_mask)
@@ -241,3 +241,35 @@ static int gm1_PRF( long digest_mask,
 err:
 	return ret;
 }
+
+
+/* --------------------------------------------- */
+// add by andy :导出给meth结构的算法
+// 生成主密钥的方法
+// TODO:可能还要完善
+/* --------------------------------------------- */
+int gm1_generate_master_secret(SSL *s,unsigned char *out,unsigned char *p,int len)
+{
+	//TODO:
+	unsigned char buff[SSL_MAX_MASTER_KEY_LENGTH];
+	const void *co = NULL,*so = NULL;
+	int col =0,sol = 0;
+
+	gm1_PRF(ssl_get_algorithm2(s),
+			TLS_MD_MASTER_SECRET_CONST,TLS_MD_MASTER_SECRET_CONST_SIZE,
+			s->s3->client_random,SSL3_RANDOM_SIZE,
+			co,col,
+			s->s3->server_random,SSL3_RANDOM_SIZE,
+			so,sol,
+			p,len,
+			s->session->master_key,buff,sizeof(buff));
+
+	OPENSSL_cleanse(buff,sizeof(buff));
+
+	fprintf(stderr,"gm1_generate_master()_secret complete.\n");
+
+	return (SSL3_MASTER_SECRET_SIZE);
+}
+
+
+

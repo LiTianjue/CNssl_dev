@@ -433,6 +433,18 @@
 # define TLS1_PRF_SHA384 (SSL_HANDSHAKE_MAC_SHA384 << TLS1_PRF_DGST_SHIFT)
 # define TLS1_PRF_GOST94 (SSL_HANDSHAKE_MAC_GOST94 << TLS1_PRF_DGST_SHIFT)
 # define TLS1_PRF (TLS1_PRF_MD5 | TLS1_PRF_SHA1)
+/*
+ * add by andy for GM_PRF
+ *
+ */
+# ifndef NO_GMSSL
+//# define GM1_HANDSHAKE_MAC_DEFAULT	(SSL_HANDSHAKE_MAC_SHA1 | SSL_HANDSHAKE_MAC_SM3)
+// SM3 only ?? 注意要调用ssl_load_ciphers后 sm3算法才能生效
+# define GM1_HANDSHAKE_MAC_DEFAULT	(SSL_HANDSHAKE_MAC_SM3)
+# define GM1_PRF_SHA1	(SSL_HANDSHAKE_MAC_SHA1 << TLS1_PRF_DGST_SHIFT)
+# define GM1_PRF_SM3	(SSL_HANDSHAKE_MAC_SM3  << TLS1_PRF_DGST_SHIFT)
+# define GM1_PRF		(GM1_PRF_SHA1 | GM1_PRF_SM3)
+# endif
 
 /*
  * Stream MAC for GOST ciphersuites from cryptopro draft (currently this also
@@ -851,6 +863,13 @@ typedef struct ssl3_enc_method {
  * apply to others in future.
  */
 # define SSL_ENC_FLAG_TLS1_2_CIPHERS     0x10
+/*
+ * add by andy GmSSL use SM3 for PRF
+ *
+ */
+# ifndef NO_GMSSL
+# define SSL_ENC_FLAG_SM3_PRF			0x20
+# endif
 
 # ifndef OPENSSL_NO_COMP
 /* Used for holding the relevant compression methods loaded into SSL_CTX */
@@ -1390,6 +1409,8 @@ int gm1_num_ciphers(void);
 const SSL_CIPHER *gm1_get_cipher(unsigned int u);
 // add by andy test ,可能不应该放在这里
 const SSL_CIPHER *gm1_get_cipher_by_char(const unsigned char *p);
+int gm1_generate_master_secret(SSL *s, unsigned char *out,
+                                unsigned char *p, int len);
 # endif
 
 int dtls1_new(SSL *s);
