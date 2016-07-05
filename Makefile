@@ -45,10 +45,10 @@ LIBOBJ= \
 	ssl/ssl_asn1.o	ssl/ssl_txt.o 	ssl/ssl_algs.o 	ssl/ssl_conf.o \
 	ssl/bio_ssl.o	ssl/ssl_err.o 	ssl/kssl.o 		ssl/t1_reneg.o ssl/tls_srp.o ssl/t1_trce.o ssl/ssl_utst.o
 
-TESTSRC= ssl_server_libssl.c ssl_client_libssl.c ssl_debug.c debug_message.c
+TESTSRC= ssl_server_libssl.c ssl_client_libssl.c ssl_debug.c debug_message.c api_test.c
 
 SRC= $(LIBSRC) $(TESTSRC)
-OBJ= $(LIBOBJ) ssl_server_libssl.o ssl_client_libssl.o ssl_debug.o debug_message.o
+OBJ= $(LIBOBJ) ssl_server_libssl.o ssl_client_libssl.o ssl_debug.o debug_message.o api_test.o
 
 EXHEADER= ssl.h ssl2.h ssl3.h ssl23.h tls1.h dtls1.h gmssl1.h  kssl.h srtp.h
 HEADER=	$(EXHEADER) ssl_locl.h kssl_lcl.h

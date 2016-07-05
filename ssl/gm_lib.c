@@ -326,17 +326,17 @@ OPENSSL_GLOBAL SSL_CIPHER gm1_ciphers[] = {
 #endif
 	/* Cipher 11 */
 	{
-		1,
-		GM1_TXT_RSA_SM4_SM3,
-		GM1_CK_RSA_SM4_SM3,
-		SSL_kRSA,
-		SSL_aRSA,
-		SSL_SM4,
-		SSL_SM3,
-		SSL_GMV1,
-		SSL_NOT_EXP | SSL_HIGH,
+		1,						//valid
+		GM1_TXT_RSA_SM4_SM3,	//name
+		GM1_CK_RSA_SM4_SM3,		//id
+		SSL_kRSA,				//密钥交换算法
+		SSL_aRSA,				//服务器认证算法
+		SSL_SM4,				//对称算法
+		SSL_SM3,				//摘要算法
+		SSL_GMV1,				//版本号
+		SSL_NOT_EXP | SSL_HIGH,	//算法强度
 		/*SSL_HANDSHAKE_MAC_DEFAULT | TLS1_PRF,*/
-		GM1_HANDSHAKE_MAC_DEFAULT | GM1_PRF_SM3,
+		GM1_HANDSHAKE_MAC_DEFAULT | GM1_PRF_SM3,	//mac 算法flags
 		128,
 		128,
 	},

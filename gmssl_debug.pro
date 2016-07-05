@@ -62,7 +62,8 @@ SOURCES += \
     ssl_server_libssl.c \
     ssl_debug.c \
     ssl_client_libssl.c \
-    debug_message.c
+    debug_message.c \
+    api_test.c
 
 HEADERS += \
     ssl/dtls1.h \
@@ -76,7 +77,8 @@ HEADERS += \
     ssl/ssl_locl.h \
     ssl/tls1.h \
 	ssl/gmssl1.h \
-    ssl_debug.h
+    ssl_debug.h \
+    api_test.h
 
 LIBS += -L /home/andy/GitHub/WORK/gmssl_dev/gmssl_dev/lib -lcrypto -ldl
 INCLUDEPATH+= -I ./crypto/  -I ./ssl  -I ./  -I ./include/
