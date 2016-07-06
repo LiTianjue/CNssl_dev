@@ -346,13 +346,16 @@ OPENSSL_GLOBAL SSL_CIPHER gm1_ciphers[] = {
 		1,						// valid
 		GM1_TXT_RSA_SM4_SHA1,	// name
 		GM1_CK_RSA_SM4_SHA1,	// id 
-		SSL_kEECDH,				// 密钥交换算法
-		SSL_aSM2,				// 服务器验证方法
+		SSL_kRSA,				//密钥交换算法
+#if 0
+		SSL_kEECDH,				add by andy : I am not sure it is safety
+#endif
+		SSL_aRSA,				// 服务器验证方法
 		SSL_SM4,				// 对称算法
 		SSL_SM3,				// mac 算法
 		SSL_GMV1,				// 协议版本
 		SSL_NOT_EXP | SSL_HIGH,	// 算法强度
-		GM1_HANDSHAKE_MAC_DEFAULT | TLS1_PRF_SHA1,	//flags
+		GM1_HANDSHAKE_MAC_DEFAULT | TLS1_PRF_SHA1,	//这里应该改成SM3??
 		128,					
 		128,
 	},
