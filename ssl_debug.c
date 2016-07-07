@@ -24,7 +24,10 @@ int main(int argc,char *argv[])
     else if(mode == 3){
         printf("SM2 Key Test\n");
         test_sm2_evp(2);
-
+    }
+    else if(mode == 4){
+        printf("SM2 Cert Test\n");
+        test_sm2_x509();
     }
     else if (mode == 0){
         return 0;

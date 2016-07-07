@@ -15,7 +15,8 @@
 
 int ssl_client_libssl(void)
 {
-	int verify_peer = ON;
+	//int verify_peer = ON;
+	int verify_peer = OFF;
 	const SSL_METHOD *client_meth;
 	SSL_CTX *ssl_client_ctx;
 	int clientsocketfd;
@@ -45,14 +46,14 @@ int ssl_client_libssl(void)
 	if(verify_peer)
 	{	
 	
-		if(SSL_CTX_use_certificate_file(ssl_client_ctx, SSL_CLIENT_RSA_CERT, SSL_FILETYPE_PEM) <= 0)	
+		if(SSL_CTX_use_certificate_file(ssl_client_ctx, CLIENT_CERT, FILE_TYPE) <= 0)	
 		{
 			ERR_print_errors_fp(stderr);
 			return -1;		
 		}
 
 	
-		if(SSL_CTX_use_PrivateKey_file(ssl_client_ctx, SSL_CLIENT_RSA_KEY, SSL_FILETYPE_PEM) <= 0)	
+		if(SSL_CTX_use_PrivateKey_file(ssl_client_ctx, CLIENT_KEY,SSL_FILETYPE_PEM) <= 0)	
 		{
 			ERR_print_errors_fp(stderr);
 			return -1;		
@@ -66,11 +67,13 @@ int ssl_client_libssl(void)
 		}	
 
 		//See function man pages for instructions on generating CERT files
-		if(!SSL_CTX_load_verify_locations(ssl_client_ctx, SSL_CLIENT_RSA_CA_CERT, NULL))
+		
+		if(!SSL_CTX_load_verify_locations(ssl_client_ctx,CA_CERT, NULL))
 		{
 			ERR_print_errors_fp(stderr);
 			return -1;		
 		}
+	
 		SSL_CTX_set_verify(ssl_client_ctx, SSL_VERIFY_PEER, NULL);
 		SSL_CTX_set_verify_depth(ssl_client_ctx, 1);
 	}

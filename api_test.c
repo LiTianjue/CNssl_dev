@@ -10,8 +10,12 @@
 #include <openssl/rand.h>
 #include <openssl/pem.h>
 #include <openssl/hmac.h>
+#include <openssl/x509.h>
+#include <openssl/x509v3.h>
 
 #define SM2_KEY_FILE    "/home/andy/GitHub/WORK/gmssl_dev/gmssl_dev/Cert/SM2_Cert/client.pem"
+
+#define SM2_CERT_FILE    "/home/andy/GitHub/WORK/gmssl_dev/gmssl_dev/Cert/SM2_Cert/client/client.cer"
 
 int test_sm2_evp(int verbose );
 
@@ -143,4 +147,75 @@ int test_sm2_evp(int verbose )
 
 err:
     return 0;
+}
+
+
+
+int test_sm2_cert_usage(X509 *x)
+{
+	int id,ret;
+	id = X509_PURPOSE_OCSP_HELPER;
+
+	ret = X509_check_purpose(x,id,0);
+	if(ret == 1)
+	{
+		printf("purpose check ok !\n");
+	} else {
+		printf("purpose check failed!\n");
+	}
+
+
+	return 0;
+}
+
+int test_sm2_check_private_key(X509 *x,EVP_PKEY *pkey)
+{
+	//EVP_PKEY *pkey = load_sm2_key_from_file(SM2_KEY_FILE);
+
+	int ret = 0;
+	ret = X509_check_private_key(x,pkey);
+	if(ret != 1)
+	{
+		printf("Check SM2 private Fail!!!\\n");
+	} else {
+		printf("Check SM2 private Key OK \n");
+	}
+
+	return ret;
+	
+}
+
+
+
+int test_sm2_x509()
+{
+	X509	*x;
+	FILE	*fp;
+	unsigned char buf[5000],*p;
+	int len,ret;
+	BIO *b;
+	
+	fp = fopen(SM2_CERT_FILE,"rb");
+	if(!fp)
+		return -1;
+
+	len = fread(buf,1,5000,fp);
+	fclose(fp);
+
+	p =  buf;
+	x = X509_new();
+	d2i_X509(&x,(const unsigned char **)&p,len);
+	b = BIO_new(BIO_s_file());
+	BIO_set_fp(b,stdout,BIO_NOCLOSE);
+	//ret = X509_print(b,x);
+	
+	EVP_PKEY *pkey = load_sm2_key_from_file(SM2_KEY_FILE);
+
+	test_sm2_cert_usage(x);
+	test_sm2_check_private_key(x,pkey);
+	
+	BIO_free(b);
+	X509_free(x);
+
+	return 0;
 }

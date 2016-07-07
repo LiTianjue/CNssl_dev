@@ -14,7 +14,8 @@
 
 int ssl_server_libssl(void)
 {
-	int verify_peer = ON;
+	//int verify_peer = ON;
+	int verify_peer = OFF;
 	const SSL_METHOD *server_meth;
 	SSL_CTX *ssl_server_ctx;
 	int serversocketfd;
@@ -24,7 +25,7 @@ int ssl_server_libssl(void)
 
 	SSL_library_init();
 	SSL_load_error_strings();
-    //server_meth = SSLv23_server_method();
+    //server_meth = TLSv1_1_server_method();
     server_meth = GMSSLv1_server_method();
 	ssl_server_ctx = SSL_CTX_new(server_meth);
 	
@@ -34,15 +35,16 @@ int ssl_server_libssl(void)
 		return -1;
 	}
 	
-	if(SSL_CTX_use_certificate_file(ssl_server_ctx, SSL_SERVER_RSA_CERT, SSL_FILETYPE_PEM) <= 0)	
+	if(SSL_CTX_use_certificate_file(ssl_server_ctx, SERVER_CERT, FILE_TYPE) <= 0)	
 	{
 		ERR_print_errors_fp(stderr);
 		return -1;		
 	}
 
 	
-	if(SSL_CTX_use_PrivateKey_file(ssl_server_ctx, SSL_SERVER_RSA_KEY, SSL_FILETYPE_PEM) <= 0)	
-	{
+    //if(SSL_CTX_use_PrivateKey_file(ssl_server_ctx, SERVER_KEY, FILE_TYPE) <= 0)
+    if(SSL_CTX_use_PrivateKey_file(ssl_server_ctx, SERVER_KEY, SSL_FILETYPE_PEM) <= 0)
+    {
 		ERR_print_errors_fp(stderr);
 		return -1;		
 	}
@@ -52,15 +54,17 @@ int ssl_server_libssl(void)
 		printf("Private and certificate is not matching\n");
 		return -1;
 	}	
-
+	
 	if(verify_peer)
 	{	
 		//See function man pages for instructions on generating CERT files
-		if(!SSL_CTX_load_verify_locations(ssl_server_ctx, SSL_SERVER_RSA_CA_CERT, NULL))
+		
+		if(!SSL_CTX_load_verify_locations(ssl_server_ctx,CA_CERT, NULL))
 		{
 			ERR_print_errors_fp(stderr);
 			return -1;		
 		}
+		
 		SSL_CTX_set_verify(ssl_server_ctx, SSL_VERIFY_PEER, NULL);
 		SSL_CTX_set_verify_depth(ssl_server_ctx, 1);
 	}
